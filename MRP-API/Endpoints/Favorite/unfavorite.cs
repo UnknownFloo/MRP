@@ -25,13 +25,7 @@ namespace MRP.Endpoints.Favorite
                 string username = GetUsername.ExtractUsername(req.Headers["Authorization"] ?? "");
 
                 await conn.OpenAsync();
-
-                // Debug: Aktuelle Favorites anzeigen
-                await using var debugCmd = new NpgsqlCommand("SELECT favorites FROM users WHERE username = @username", conn);
-                debugCmd.Parameters.AddWithValue("username", username);
-                var currentFavorites = await debugCmd.ExecuteScalarAsync();
-                Console.WriteLine($"Current favorites for {username}: {currentFavorites}");
-
+                
                 // Prüfen ob das Media überhaupt in Favorites ist
                 await using var checkCmd = new NpgsqlCommand("SELECT @mediaId = ANY(COALESCE(favorites, '{}')) FROM users WHERE username = @username", conn);
                 checkCmd.Parameters.AddWithValue("mediaId", mediaId);
@@ -54,10 +48,6 @@ namespace MRP.Endpoints.Favorite
 
                 if (rowsAffected > 0)
                 {
-                    // Debug: Neue Favorites anzeigen
-                    var newFavorites = await debugCmd.ExecuteScalarAsync();
-                    Console.WriteLine($"New favorites for {username}: {newFavorites}");
-                    
                     await Success.Handle200(req, resp, "Media unfavorited successfully.");
                 }
                 else

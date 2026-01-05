@@ -14,10 +14,7 @@ namespace MRP.Endpoints.Auth
             {
                 string JsonData = reader.ReadToEnd();
 
-                Console.WriteLine("Received JSON Data: " + JsonData);
                 User? user = JsonSerializer.Deserialize<User>(JsonData);
-
-                Console.WriteLine($"User Type: {user?.GetType().Name}");
 
                 if (user == null || string.IsNullOrEmpty(user.username) || string.IsNullOrEmpty(user.password))
                 {
@@ -30,7 +27,6 @@ namespace MRP.Endpoints.Auth
                 await using var checkCmd = new NpgsqlCommand("SELECT COUNT(username) FROM users WHERE username = @username", conn);
                 checkCmd.Parameters.AddWithValue("username", user.username);
                 var userExists = (long)(await checkCmd.ExecuteScalarAsync() ?? 0) > 0;
-                Console.WriteLine("User exists: " + userExists);
 
                 if (!userExists)
                 {

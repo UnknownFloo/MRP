@@ -18,8 +18,6 @@ namespace MRP
 
         private static readonly Dictionary<(string method, string path), RouteHandler> routes = new()
         {
-            { ("GET", "/debug"), Debug }, // Placeholder
-
             { ("POST", "/api/auth/register"), Register.HandleRegister },
             { ("POST", "/api/auth/login"), Login.HandleLogin },
 
@@ -47,10 +45,6 @@ namespace MRP
             { ("GET", "/api/recommendations/content"), byContent.HandleByContent }
         };
 
-        public static async Task Debug(HttpListenerRequest req, HttpListenerResponse resp)
-        {
-            await Success.Handle200(req, resp, "Debug endpoint is working!");
-        }
 
         public static async Task HandleIncomingConnections()
         {
